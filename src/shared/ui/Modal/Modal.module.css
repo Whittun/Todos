@@ -1,0 +1,71 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background-color: rgb(15 23 42 / 42%);
+}
+
+.modal {
+  width: min(100%, 520px);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  color: #111827;
+  background-color: #ffffff;
+  box-shadow: 0 24px 80px rgb(15 23 42 / 28%);
+}
+
+.header {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 20px 20px 12px;
+}
+
+.title {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.25;
+}
+
+.closeButton {
+  display: inline-grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  color: #334155;
+  background-color: #eef2f7;
+  font: inherit;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.closeButton:hover {
+  color: #111827;
+  background-color: #e2e8f0;
+}
+
+.content {
+  padding: 0 20px 20px;
+}
+
+@media (max-width: 520px) {
+  .overlay {
+    align-items: end;
+    padding: 12px;
+  }
+
+  .modal {
+    width: 100%;
+  }
+}

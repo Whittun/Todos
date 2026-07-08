@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState, type SubmitEventHandler } from "react";
-import { fetchTasks, type Task } from "../../entities/task";
+import { fetchTasks, TaskDetails, type Task } from "../../entities/task";
 import { TaskList } from "../../features/task-list";
+import { Modal } from "../../shared/ui";
 import styles from "./TodosPage.module.css";
 
 type StatusFilter = "all" | "completed" | "uncompleted";
 
 export const TodosPage = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [searchValue, setSearchValue] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
@@ -85,13 +87,19 @@ export const TodosPage = () => {
             </form>
 
             {filteredTasks.length > 0 ? (
-              <TaskList tasks={filteredTasks} />
+              <TaskList tasks={filteredTasks} onTaskClick={setSelectedTask} />
             ) : (
               <div className={styles.state}>Задачи не найдены</div>
             )}
           </>
         )}
       </section>
+
+      {selectedTask && (
+        <Modal title="Детали задачи" onClose={() => setSelectedTask(null)}>
+          <TaskDetails task={selectedTask} />
+        </Modal>
+      )}
     </main>
   );
 };

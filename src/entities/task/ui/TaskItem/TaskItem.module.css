@@ -1,11 +1,30 @@
 .item {
   display: grid;
   gap: 10px;
+  width: 100%;
   padding: 16px;
   border: 1px solid #d9dde7;
   border-radius: 8px;
+  text-align: left;
   background-color: #ffffff;
   box-shadow: 0 8px 24px rgb(15 23 42 / 6%);
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.item:hover {
+  border-color: #93c5fd;
+  box-shadow: 0 12px 30px rgb(15 23 42 / 10%);
+  transform: translateY(-1px);
+}
+
+.item:focus-visible {
+  border-color: #2563eb;
+  outline: 2px solid rgb(37 99 235 / 18%);
+  outline-offset: 2px;
 }
 
 .title {
