@@ -5,13 +5,10 @@ import {
   filterTasks,
   TaskFilters,
   TaskList,
-  type SortOrder,
-  type StatusFilter,
+  useTaskFilters,
 } from "../../features/tasks-list";
 import { Modal } from "../../shared/ui";
 import styles from "./TodosPage.module.css";
-
-const SEARCH_DEBOUNCE_DELAY = 400;
 
 export const TodosPage = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -19,12 +16,18 @@ export const TodosPage = () => {
   const [selectedTaskUser, setSelectedTaskUser] = useState<User | null>(null);
   const [isUserLoading, setIsUserLoading] = useState(false);
   const [userError, setUserError] = useState<string | null>(null);
-  const [searchValue, setSearchValue] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
-  const [sortOrder, setSortOrder] = useState<SortOrder>("default");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const {
+    searchValue,
+    searchQuery,
+    sortOrder,
+    statusFilter,
+    setSearchValue,
+    setSortOrder,
+    setStatusFilter,
+    resetFilters,
+  } = useTaskFilters();
 
   const filteredTasks = useMemo(
     () => filterTasks({ tasks, searchQuery, sortOrder, statusFilter }),
@@ -46,16 +49,6 @@ export const TodosPage = () => {
 
     loadTasks();
   }, []);
-
-  useEffect(() => {
-    const timeoutId = window.setTimeout(() => {
-      setSearchQuery(searchValue);
-    }, SEARCH_DEBOUNCE_DELAY);
-
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
-  }, [searchValue]);
 
   useEffect(() => {
     if (!selectedTask) {
@@ -93,13 +86,6 @@ export const TodosPage = () => {
     };
   }, [selectedTask]);
 
-  const handleFiltersReset = () => {
-    setSearchValue("");
-    setSearchQuery("");
-    setStatusFilter("all");
-    setSortOrder("default");
-  };
-
   const handleModalClose = () => {
     setSelectedTask(null);
     setSelectedTaskUser(null);
@@ -127,7 +113,7 @@ export const TodosPage = () => {
               onSearchChange={setSearchValue}
               onSortChange={setSortOrder}
               onStatusChange={setStatusFilter}
-              onReset={handleFiltersReset}
+              onReset={resetFilters}
             />
 
             <p className={styles.resultsCount}>
