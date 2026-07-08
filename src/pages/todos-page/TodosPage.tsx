@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { fetchTasks, TaskDetails, type Task } from "../../entities/task";
 import { fetchUserById, UserCard, type User } from "../../entities/user";
-import { TaskList } from "../../features/task-list";
+import {
+  filterTasks,
+  TaskFilters,
+  TaskList,
+  type StatusFilter,
+} from "../../features/tasks-list";
 import { Modal } from "../../shared/ui";
 import styles from "./TodosPage.module.css";
-
-type StatusFilter = "all" | "completed" | "uncompleted";
 
 const SEARCH_DEBOUNCE_DELAY = 400;
 
@@ -21,17 +24,10 @@ export const TodosPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const filteredTasks = useMemo(() => {
-    const normalizedSearchQuery = searchQuery.trim().toLowerCase();
-
-    return tasks.filter(
-      (task) =>
-        task.title.toLowerCase().includes(normalizedSearchQuery) &&
-        (statusFilter === "all" ||
-          (statusFilter === "completed" && task.completed) ||
-          (statusFilter === "uncompleted" && !task.completed)),
-    );
-  }, [searchQuery, statusFilter, tasks]);
+  const filteredTasks = useMemo(
+    () => filterTasks({ tasks, searchQuery, statusFilter }),
+    [searchQuery, statusFilter, tasks],
+  );
 
   useEffect(() => {
     const loadTasks = async () => {
@@ -95,6 +91,12 @@ export const TodosPage = () => {
     };
   }, [selectedTask]);
 
+  const handleFiltersReset = () => {
+    setSearchValue("");
+    setSearchQuery("");
+    setStatusFilter("all");
+  };
+
   const handleModalClose = () => {
     setSelectedTask(null);
     setSelectedTaskUser(null);
@@ -115,26 +117,13 @@ export const TodosPage = () => {
         )}
         {!isLoading && !error && (
           <>
-            <div className={styles.filters}>
-              <input
-                className={styles.searchInput}
-                type="search"
-                placeholder="Поиск по названию"
-                value={searchValue}
-                onChange={(event) => setSearchValue(event.target.value)}
-              />
-              <select
-                className={styles.statusSelect}
-                value={statusFilter}
-                onChange={(event) =>
-                  setStatusFilter(event.target.value as StatusFilter)
-                }
-              >
-                <option value="all">Все</option>
-                <option value="completed">Выполненные</option>
-                <option value="uncompleted">Невыполненные</option>
-              </select>
-            </div>
+            <TaskFilters
+              searchValue={searchValue}
+              statusFilter={statusFilter}
+              onSearchChange={setSearchValue}
+              onStatusChange={setStatusFilter}
+              onReset={handleFiltersReset}
+            />
 
             <p className={styles.resultsCount}>
               Найдено: {filteredTasks.length}
