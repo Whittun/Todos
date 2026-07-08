@@ -71,6 +71,13 @@
   background-color: #ffffff;
 }
 
+.resultsCount {
+  margin: 0 0 12px;
+  color: #475569;
+  font-size: 14px;
+  font-weight: 700;
+}
+
 .error {
   color: #991b1b;
   border-color: #fecaca;

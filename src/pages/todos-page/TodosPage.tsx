@@ -136,6 +136,10 @@ export const TodosPage = () => {
               </select>
             </div>
 
+            <p className={styles.resultsCount}>
+              Найдено: {filteredTasks.length}
+            </p>
+
             {filteredTasks.length > 0 ? (
               <TaskList tasks={filteredTasks} onTaskClick={setSelectedTask} />
             ) : (
