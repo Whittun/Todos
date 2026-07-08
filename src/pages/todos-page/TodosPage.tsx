@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type SubmitEventHandler } from "react";
 import { fetchTasks, TaskDetails, type Task } from "../../entities/task";
+import { fetchUserById, UserCard, type User } from "../../entities/user";
 import { TaskList } from "../../features/task-list";
 import { Modal } from "../../shared/ui";
 import styles from "./TodosPage.module.css";
@@ -9,6 +10,9 @@ type StatusFilter = "all" | "completed" | "uncompleted";
 export const TodosPage = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [selectedTaskUser, setSelectedTaskUser] = useState<User | null>(null);
+  const [isUserLoading, setIsUserLoading] = useState(false);
+  const [userError, setUserError] = useState<string | null>(null);
   const [searchValue, setSearchValue] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
@@ -43,10 +47,53 @@ export const TodosPage = () => {
     loadTasks();
   }, []);
 
+  useEffect(() => {
+    if (!selectedTask) {
+      return;
+    }
+
+    let isActive = true;
+
+    const loadUser = async () => {
+      try {
+        setSelectedTaskUser(null);
+        setUserError(null);
+        setIsUserLoading(true);
+
+        const user = await fetchUserById(selectedTask.userId);
+
+        if (isActive) {
+          setSelectedTaskUser(user);
+        }
+      } catch (error) {
+        if (isActive) {
+          setUserError("Не удалось загрузить пользователя");
+        }
+      } finally {
+        if (isActive) {
+          setIsUserLoading(false);
+        }
+      }
+    };
+
+    loadUser();
+
+    return () => {
+      isActive = false;
+    };
+  }, [selectedTask]);
+
   const handleSearchSubmit: SubmitEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
 
     setSearchQuery(searchValue);
+  };
+
+  const handleModalClose = () => {
+    setSelectedTask(null);
+    setSelectedTaskUser(null);
+    setIsUserLoading(false);
+    setUserError(null);
   };
 
   return (
@@ -96,8 +143,15 @@ export const TodosPage = () => {
       </section>
 
       {selectedTask && (
-        <Modal title="Детали задачи" onClose={() => setSelectedTask(null)}>
-          <TaskDetails task={selectedTask} />
+        <Modal title="Детали задачи" onClose={handleModalClose}>
+          <div className={styles.modalContent}>
+            <TaskDetails task={selectedTask} />
+            <UserCard
+              user={selectedTaskUser}
+              isLoading={isUserLoading}
+              error={userError}
+            />
+          </div>
         </Modal>
       )}
     </main>

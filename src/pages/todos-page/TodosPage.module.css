@@ -93,6 +93,11 @@
   background-color: #fef2f2;
 }
 
+.modalContent {
+  display: grid;
+  gap: 18px;
+}
+
 @media (max-width: 520px) {
   .page {
     padding: 24px 12px;
