@@ -16,6 +16,12 @@ npm install
 npm run dev
 ```
 
+Зайти на:
+
+```
+http://localhost:5173/
+```
+
 ## Технологии
 
 - React
