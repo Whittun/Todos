@@ -65,7 +65,7 @@ export const TodosPage = () => {
         if (isActive) {
           setSelectedTaskUser(user);
         }
-      } catch (error) {
+      } catch {
         if (isActive) {
           setUserError("Не удалось загрузить пользователя");
         }
