@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type SubmitEventHandler } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { fetchTasks, TaskDetails, type Task } from "../../entities/task";
 import { fetchUserById, UserCard, type User } from "../../entities/user";
 import { TaskList } from "../../features/task-list";
@@ -6,6 +6,8 @@ import { Modal } from "../../shared/ui";
 import styles from "./TodosPage.module.css";
 
 type StatusFilter = "all" | "completed" | "uncompleted";
+
+const SEARCH_DEBOUNCE_DELAY = 400;
 
 export const TodosPage = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -48,6 +50,16 @@ export const TodosPage = () => {
   }, []);
 
   useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      setSearchQuery(searchValue);
+    }, SEARCH_DEBOUNCE_DELAY);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [searchValue]);
+
+  useEffect(() => {
     if (!selectedTask) {
       return;
     }
@@ -83,12 +95,6 @@ export const TodosPage = () => {
     };
   }, [selectedTask]);
 
-  const handleSearchSubmit: SubmitEventHandler<HTMLFormElement> = (event) => {
-    event.preventDefault();
-
-    setSearchQuery(searchValue);
-  };
-
   const handleModalClose = () => {
     setSelectedTask(null);
     setSelectedTaskUser(null);
@@ -109,7 +115,7 @@ export const TodosPage = () => {
         )}
         {!isLoading && !error && (
           <>
-            <form className={styles.searchForm} onSubmit={handleSearchSubmit}>
+            <div className={styles.filters}>
               <input
                 className={styles.searchInput}
                 type="search"
@@ -117,9 +123,6 @@ export const TodosPage = () => {
                 value={searchValue}
                 onChange={(event) => setSearchValue(event.target.value)}
               />
-              <button className={styles.searchButton} type="submit">
-                Найти
-              </button>
               <select
                 className={styles.statusSelect}
                 value={statusFilter}
@@ -131,7 +134,7 @@ export const TodosPage = () => {
                 <option value="completed">Выполненные</option>
                 <option value="uncompleted">Невыполненные</option>
               </select>
-            </form>
+            </div>
 
             {filteredTasks.length > 0 ? (
               <TaskList tasks={filteredTasks} onTaskClick={setSelectedTask} />

@@ -27,9 +27,9 @@
   line-height: 1.5;
 }
 
-.searchForm {
+.filters {
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: 1fr auto;
   gap: 12px;
   margin-bottom: 20px;
 }
@@ -63,22 +63,6 @@
   outline: 2px solid rgb(37 99 235 / 18%);
 }
 
-.searchButton {
-  min-height: 44px;
-  padding: 10px 18px;
-  border: 0;
-  border-radius: 8px;
-  color: #ffffff;
-  background-color: #2563eb;
-  font: inherit;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.searchButton:hover {
-  background-color: #1d4ed8;
-}
-
 .state {
   padding: 16px;
   border: 1px solid #d9dde7;
@@ -107,7 +91,7 @@
     font-size: 26px;
   }
 
-  .searchForm {
+  .filters {
     grid-template-columns: 1fr auto;
     gap: 10px;
   }
