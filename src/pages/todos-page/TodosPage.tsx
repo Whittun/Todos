@@ -5,6 +5,7 @@ import {
   filterTasks,
   TaskFilters,
   TaskList,
+  type SortOrder,
   type StatusFilter,
 } from "../../features/tasks-list";
 import { Modal } from "../../shared/ui";
@@ -21,12 +22,13 @@ export const TodosPage = () => {
   const [searchValue, setSearchValue] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [sortOrder, setSortOrder] = useState<SortOrder>("default");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const filteredTasks = useMemo(
-    () => filterTasks({ tasks, searchQuery, statusFilter }),
-    [searchQuery, statusFilter, tasks],
+    () => filterTasks({ tasks, searchQuery, sortOrder, statusFilter }),
+    [searchQuery, sortOrder, statusFilter, tasks],
   );
 
   useEffect(() => {
@@ -95,6 +97,7 @@ export const TodosPage = () => {
     setSearchValue("");
     setSearchQuery("");
     setStatusFilter("all");
+    setSortOrder("default");
   };
 
   const handleModalClose = () => {
@@ -119,8 +122,10 @@ export const TodosPage = () => {
           <>
             <TaskFilters
               searchValue={searchValue}
+              sortOrder={sortOrder}
               statusFilter={statusFilter}
               onSearchChange={setSearchValue}
+              onSortChange={setSortOrder}
               onStatusChange={setStatusFilter}
               onReset={handleFiltersReset}
             />
